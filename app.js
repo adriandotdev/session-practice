@@ -9,6 +9,8 @@ const BlogRoute = require('./routes/blogs');
 
 const port = process.env.PORT || 3000;
 
+require('./database');
+
 app.use(session({
     name: 'session',
     secret: process.env.SECRET_KEY,
@@ -30,9 +32,13 @@ function authenticate(req, res, next) {
     res.status(401).json({ message: 'Authentication failed' });
 }
 
+// Authentication Route
 app.use(AuthRoute);
 
+// Authenticate Middleware
 app.use(authenticate);
+
+// Blog Route
 app.use(BlogRoute);
 
 app.listen(3000, () => {
