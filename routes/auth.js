@@ -6,7 +6,6 @@ const User = require('../model/User');
 
 router.post('/login', async (req, res) => {
 
-    console.log("LOGIN ROUTE")
     const { username, password } = req.body;
 
     const foundUsername = await User.find({ username });
@@ -16,6 +15,7 @@ router.post('/login', async (req, res) => {
     if (password !== foundUsername[0].password) return res.status(404).json({ message: 'Password is incorrect.' });
 
     req.session.authenticated = true;
+    req.session.userID = foundUsername[0].id;
 
     res.status(200).json({ message: 'Successfully logged in!' });
 });
