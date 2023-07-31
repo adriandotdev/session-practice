@@ -2,30 +2,22 @@ const { Router } = require('express');
 
 const router = Router();
 
-const blogs = [
-    {
-        id: 1,
-        title: 'Blog 1',
-        description: 'Description 1'
-    },
-    {
-        id: 2,
-        title: 'Blog 2',
-        description: 'Description 2'
-    },
-    {
-        id: 3,
-        title: 'Blog 3',
-        description: 'Description 3'
+// Model
+const Blog = require('../model/Blog');
+
+router.get('/api/v1/blogs', async (req, res) => {
+
+    try {
+        const response = await Blog.find();
+
+        res.status(200).json(response);
     }
-]
-
-router.get('/api/v1/blogs', (req, res) => {
-
-    res.status(200).json(blogs);
+    catch (err) {
+        res.status(400).json(err);
+    }
 });
 
-router.get('/api/v1/blogs', (req, res) => {
+router.get('/api/v1/blogs/search', (req, res) => {
 
     console.log(req.query);
     const { title } = req.query;
@@ -48,6 +40,20 @@ router.get('/api/v1/blogs/:id', (req, res) => {
     if (blog) return res.status(200).json(blog);
 
     return res.status(404).send({ message: 'Blog Not Found' });
+});
+
+router.post('/api/v1/blogs', async (req, res) => {
+
+    const blog = new Blog(req.body);
+
+    try {
+        await blog.save();
+
+        res.status(200).json(req.body);
+    }
+    catch (err) {
+        res.status(400).json(err);
+    }
 });
 
 module.exports = router;
