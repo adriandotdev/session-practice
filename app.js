@@ -15,7 +15,6 @@ const AuthRoute = require('./routes/auth');
 const BlogRoute = require('./routes/blogs');
 
 const port = process.env.PORT || 3000;
-// const memoryStore = new session.MemoryStore();
 
 app.use(session({
     name: 'session',

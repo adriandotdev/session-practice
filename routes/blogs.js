@@ -8,7 +8,6 @@ const Blog = require('../model/Blog');
 
 router.get('/api/v1/blogs', async (req, res) => {
 
-    console.log(req.user);
     try {
         const response = await Blog.find({ author: req.user.id }).sort({ title: 1 });
         res.status(200).json(response);
