@@ -1,23 +1,13 @@
 const { Router } = require('express');
-
+const bcrypt = require('bcryptjs');
+const passport = require('passport');
 const router = Router();
 
 const User = require('../model/User');
 
-router.post('/login', async (req, res) => {
-
-    const { username, password } = req.body;
-
-    const foundUsername = await User.find({ username });
-
-    if (foundUsername.length === 0) return res.status(404).json({ message: 'Username not found' });
-
-    if (password !== foundUsername[0].password) return res.status(404).json({ message: 'Password is incorrect.' });
-
-    req.session.authenticated = true;
-    req.session.userID = foundUsername[0].id;
-
-    res.status(200).json({ message: 'Successfully logged in!' });
+router.post('/login', passport.authenticate('local'), (req, res) => {
+    console.log('Logged In');
+    res.send(200);
 });
 
 router.post('/logout', (req, res) => {
@@ -35,7 +25,12 @@ router.post('/signup', async (req, res) => {
 
     if (isExisting.length > 0) return res.status(400).json({ message: 'Username or email already exists.' });
 
-    const user = new User(req.body);
+    // Hash the password
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync(req.body.password, salt);
+
+    // Create a new User
+    const user = new User({ ...req.body, password: hashedPassword });
 
     try {
         await user.save();
