@@ -6,10 +6,16 @@ const router = Router();
 // Model
 const Blog = require('../model/Blog');
 
+// Validator
+const blogValidator = require('../validation/blogValidator');
+
 router.get('/api/v1/blogs', async (req, res) => {
 
     try {
         const response = await Blog.find({ author: req.user.id }).sort({ title: 1 });
+
+        if (response.length === 0) return res.status(200).json({ message: 'You have no blog entries.' });
+
         res.status(200).json(response);
     }
     catch (err) {
@@ -35,6 +41,9 @@ router.get('/api/v1/blogs/search', async (req, res) => {
     }
 });
 
+/**
+ * @GET /api/v1/blogs/:id
+ */
 router.get('/api/v1/blogs/:id', async (req, res) => {
 
     const { id } = req.params;
@@ -51,7 +60,14 @@ router.get('/api/v1/blogs/:id', async (req, res) => {
     }
 });
 
+/**
+ * @POST /api/v1/blogs
+ */
 router.post('/api/v1/blogs', async (req, res) => {
+
+    const { error } = blogValidator.validate(req.body);
+
+    if (error) return res.status(400).json({ message: 'Please provide all of the required fields.' });
 
     const { title, content, isPublished } = req.body;
 
@@ -67,7 +83,7 @@ router.post('/api/v1/blogs', async (req, res) => {
     try {
         await blog.save();
 
-        res.status(200).json(req.body);
+        res.status(200).json({ message: 'Blog succesfully saved!' });
     }
     catch (err) {
         res.status(400).json(err);
