@@ -5,7 +5,7 @@ const MongoStore = require('connect-mongo');
 
 const passport = require('passport');
 
-require('./strategies/local');
+require('./strategies/local'); // Register the strategies.
 require('./database');
 
 const app = express();

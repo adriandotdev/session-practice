@@ -1,3 +1,7 @@
+/**
+ * @INFO_OF_THIS_fILE
+ * This file includes how to setup the basic strategy
+ * for PassportJS, which is the local strategy. */
 const passport = require('passport');
 const bcrypt = require('bcryptjs');
 const { Strategy } = require('passport-local');
@@ -5,10 +9,17 @@ const { Strategy } = require('passport-local');
 // Model
 const User = require('../model/User');
 
+/**
+ * @INFO
+ * This callback will run whenever the PassportJS start to authenticate the request.
+ */
 passport.serializeUser((user, done) => {
     done(null, user[0].id);
 });
 
+/**
+ * @INFO
+ * This callback will run for every request made. */
 passport.deserializeUser(async (id, done) => {
     try {
 
@@ -22,6 +33,14 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
+/**
+ * @INFO about this middleware
+ * 
+ * "Strategy" class accepts two parameters:
+ * 
+ * @param obj:
+ * This will setup the field of PassportJS.
+ */
 passport.use(
     new Strategy({
         usernameField: 'username'

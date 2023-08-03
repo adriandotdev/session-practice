@@ -9,6 +9,9 @@ const Blog = require('../model/Blog');
 // Validator
 const blogValidator = require('../validation/blogValidator');
 
+/**
+ * @GET /api/v1/blogs
+ */
 router.get('/api/v1/blogs', async (req, res) => {
 
     try {
@@ -23,6 +26,9 @@ router.get('/api/v1/blogs', async (req, res) => {
     }
 });
 
+/**
+ * @GET /api/v1/blogs/search
+ */
 router.get('/api/v1/blogs/search', async (req, res) => {
 
     const { title } = req.query;
@@ -87,6 +93,25 @@ router.post('/api/v1/blogs', async (req, res) => {
     }
     catch (err) {
         res.status(400).json(err);
+    }
+});
+
+router.delete('/api/v1/blogs/:id', async (req, res) => {
+
+    const { id } = req.params;
+
+    try {
+
+        const response = await Blog.findByIdAndDelete({ _id: id });
+
+        if (response) {
+            return res.status(200).json({ message: 'Blog deleted successfully' });
+        }
+
+        res.status(404).json({ message: 'Blog not found' });
+    }
+    catch (err) {
+        res.json({ message: "Blog not found" });
     }
 });
 
